@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gry biurowe — hub</title>
+<style>
+  :root { --bg:#1e1e2e; --panel:#2a2a3c; --text:#e6e6e6; --muted:#9aa0a6; --accent:#4f8cff; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  header { padding:16px 20px; border-bottom:1px solid #333; display:flex; align-items:center; gap:12px; }
+  header h1 { margin:0; font-size:20px; }
+  .hub { padding:20px; max-width:1100px; margin:0 auto; }
+  .games { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+  .gamecard { background:var(--panel); border-radius:12px; padding:16px; cursor:pointer; border:1px solid #333; transition:transform .1s; }
+  .gamecard:hover { transform:translateY(-2px); border-color:var(--accent); }
+  .gamecard h3 { margin:0 0 6px; }
+  .gamecard p { color:var(--muted); font-size:14px; margin:0; }
+  #game-root { padding:16px; }
+  .back { background:#444; color:#fff; border:none; border-radius:8px; padding:8px 12px; cursor:pointer; margin-bottom:12px; }
+  .footer { text-align:center; color:var(--muted); font-size:12px; padding:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Gry biurowe (offline)</h1>
+  <span style="color:var(--muted);font-size:13px;">Działa bez internetu. Dodawaj kolejne gry w folderze games/.</span>
+</header>
+<div class="hub" id="hub">
+  <div class="games" id="games"></div>
+</div>
+<div id="game-root" style="display:none;"></div>
+<div class="footer">Esc = ukryj/pokaż tryb "szef". Wszystko lokalne.</div>
+
+<div id="camo" style="position:fixed;inset:0;background:#f3f3f3;color:#222;z-index:100;display:none;font-family:Calibri,Arial,sans-serif;">
+  <div style="background:#217346;color:#fff;padding:6px 12px;font-size:14px;">Microsoft Excel — Księgowość_Q3.xlsx</div>
+  <div style="padding:12px;">
+    <table style="border-collapse:collapse;">
+      <tr><td style="border:1px solid #ccc;padding:4px 8px;">A1</td><td style="border:1px solid #ccc;padding:4px 8px;">B1</td><td style="border:1px solid #ccc;padding:4px 8px;">C1</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:4px 8px;">1200</td><td style="border:1px solid #ccc;padding:4px 8px;">890</td><td style="border:1px solid #ccc;padding:4px 8px;">340</td></tr>
+      <tr><td style="border:1px solid #ccc;padding:4px 8px;">780</td><td style="border:1px solid #ccc;padding:4px 8px;">1100</td><td style="border:1px solid #ccc;padding:4px 8px;">450</td></tr>
+    </table>
+    <p style="color:#666;margin-top:20px;">(Naciśnij Esc, aby wrócić do gry.)</p>
+  </div>
+</div>
+
+<script src="games/chess.js"></script>
+<script src="games/empire.js"></script>
+<script src="games/worms.js"></script>
+<script>
+const GAMES = [
+  (typeof ChessGame !== 'undefined') ? ChessGame : null,
+  (typeof EmpireGame !== 'undefined') ? EmpireGame : null,
+  (typeof WormsGame !== 'undefined') ? WormsGame : null
+].filter(Boolean);
+
+const gamesEl = document.getElementById('games');
+GAMES.forEach(g => {
+  const card = document.createElement('div');
+  card.className = 'gamecard';
+  card.innerHTML = `<h3>${g.name}</h3><p>${g.desc}</p>`;
+  card.addEventListener('click', () => openGame(g));
+  gamesEl.appendChild(card);
+});
+
+function openGame(g){
+  document.getElementById('hub').style.display='none';
+  const root = document.getElementById('game-root');
+  root.style.display='block';
+  root.innerHTML = '<button class="back" id="backBtn">← Wróć do menu</button><div id="game-container"></div>';
+  document.getElementById('backBtn').addEventListener('click', closeGame);
+  g.init(document.getElementById('game-container'));
+}
+function closeGame(){
+  document.getElementById('game-root').style.display='none';
+  document.getElementById('game-root').innerHTML='';
+  document.getElementById('hub').style.display='block';
+}
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape'){
+    const camo = document.getElementById('camo');
+    camo.style.display = camo.style.display==='block'?'none':'block';
+  }
+});
+</script>
+</body>
+</html>
