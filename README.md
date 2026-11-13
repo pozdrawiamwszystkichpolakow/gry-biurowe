@@ -1,5 +1,7 @@
 # Gry biurowe (offline)
 
+Graj online: https://pozdrawiamwszystkichpolakow.github.io/gry-biurowe/ (GitHub Pages)
+
 Zestaw lekkich gier przeglądarkowych działających bez internetu i bez zewnętrznych zależności (jeden plik HTML + moduły JS). Zaprojektowane do grania w pracy, gdzie strony z grami są blokowane.
 
 ## Uruchomienie
